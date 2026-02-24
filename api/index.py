@@ -4,8 +4,8 @@ import requests
 from flask import Flask, request
 from telebot.types import InputMediaPhoto
 
-# Environment variable থেকে টোকেন নেওয়া ভালো, তবে আপাতত আপনারটিই দিলাম
-BOT_TOKEN = os.environ.get('BOT_TOKEN', '8450856906:AAFAtQ-EF4r5sFIypo4ac9dEt7frS9nxXwU')
+# আপনার নতুন টোকেনটি এখানে সেট করা হলো
+BOT_TOKEN = '8450856906:AAFAtQ-EF4r5sFIypo4ac9dEt7frS9nxXwU'
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 
