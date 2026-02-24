@@ -4,7 +4,6 @@ import requests
 from flask import Flask, request
 from telebot.types import InputMediaPhoto
 
-# আপনার নতুন টোকেনটি এখানে সেট করা হলো
 BOT_TOKEN = '8450856906:AAFAtQ-EF4r5sFIypo4ac9dEt7frS9nxXwU'
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
@@ -50,9 +49,9 @@ def send_welcome(message):
         welcome_text = f"{welcome_text_bangla}\n\n{'━'*30}\n\n{welcome_text_english}"
         
         bot.send_chat_action(message.chat.id, 'typing')
-        bot.reply_to(message, welcome_text, parse_mode="Markdown")
+        bot.reply_to(message, welcome_text)  # Markdown parse_mode সরানো হয়েছে সেফটির জন্য
     except Exception as e:
-        pass
+        bot.reply_to(message, "⚠️ স্বাগতম মেসেজ পাঠাতে সমস্যা হচ্ছে।")
 
 @bot.message_handler(func=lambda message: True)
 def download_tiktok(message):
@@ -124,7 +123,7 @@ def download_tiktok(message):
                     except:
                         pass
                 except Exception as e:  
-                    bot.edit_message_text(f"{caption_text}\n\n🔗 [Download Link]({video_url})", chat_id=message.chat.id, message_id=status_msg.message_id, parse_mode="Markdown")  
+                    bot.edit_message_text(f"{caption_text}\n\n🔗 Download Link: {video_url}", chat_id=message.chat.id, message_id=status_msg.message_id)  
 
         else:  
             bot.edit_message_text("❌ ভিডিও পাওয়া যায়নি।", chat_id=message.chat.id, message_id=status_msg.message_id)  
@@ -142,10 +141,11 @@ def index():
 
 @app.route(f'/{BOT_TOKEN}', methods=['POST'])
 def webhook():
-    if request.headers.get('content-type') == 'application/json':
+    try:
+        # content-type চেকটি সরিয়ে দেওয়া হলো যাতে কোনো মেসেজ রিজেক্ট না হয়
         json_string = request.get_data().decode('utf-8')
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
-        return '', 200
-    else:
-        return 'Error', 403
+        return 'OK', 200
+    except Exception as e:
+        return f"Error: {e}", 500
